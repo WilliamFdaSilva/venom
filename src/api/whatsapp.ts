@@ -4,6 +4,7 @@ import { Message } from './model';
 import { magix, timeout, makeOptions } from './helpers/decrypt';
 import { useragentOverride } from '../config/WAuserAgente';
 import { CreateConfig } from '../config/create-config';
+import { forceLogoutFromWeb } from './force-logout';
 import axios from 'axios';
 import * as path from 'path';
 import fs from 'fs/promises';
@@ -139,6 +140,10 @@ export class Whatsapp extends ControlsLayer {
    */
   public async logout() {
     return await this.page.evaluate(() => WAPI.logout());
+  }
+
+  public async forceLogoutFromWeb(): Promise<boolean> {
+    return await forceLogoutFromWeb(this.page);
   }
 
   /**
