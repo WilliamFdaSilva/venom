@@ -13,17 +13,34 @@ export async function forceLogoutFromWeb(page: Page): Promise<boolean> {
     await page.waitForTimeout(800);
 
     const [logoutButton] = await page.$x(
-      "//*[self::div or self::span][normalize-space(text())='Sair' or normalize-space(text())='Log out' or normalize-space(text())='Desconectar']"
+      "//*[self::div or self::span][normalize-space(text())='Sair' or normalize-space(text())='Log out' or normalize-space(text())='Desconectar' or normalize-space(text())='Disconnect']"
     );
 
     if (logoutButton) {
-      const element = logoutButton as ElementHandle<Element>;
-      await element.click();
-      return true;
+      await (logoutButton as ElementHandle<Element>).click();
+
+      await page.waitForXPath(
+        "//*[self::div or self::button or self::span][normalize-space(text())='Desconectar' or normalize-space(text())='Disconnect' or normalize-space(text())='Log out']",
+        { timeout: 5000 }
+      );
+
+      const [confirmButton] = await page.$x(
+        "//*[self::div or self::button or self::span][normalize-space(text())='Desconectar' or normalize-space(text())='Disconnect' or normalize-space(text())='Log out']"
+      );
+
+      if (confirmButton) {
+        await (confirmButton as ElementHandle<Element>).click();
+        return true;
+      } else {
+        console.warn(
+          '[forceLogoutFromWeb] Botão de confirmação não encontrado.'
+        );
+        return false;
+      }
     }
 
     console.warn(
-      '[forceLogoutFromWeb] Botão de logout não encontrado na tela de configurações.'
+      '[forceLogoutFromWeb] Botão de logout lateral não encontrado.'
     );
     return false;
   } catch (error) {
