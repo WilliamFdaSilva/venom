@@ -2,17 +2,18 @@ import { Page, ElementHandle } from 'puppeteer';
 
 export async function forceLogoutFromWeb(page: Page): Promise<boolean> {
   try {
-    await page.waitForSelector('span[data-icon="menu"]', { timeout: 5000 });
-    await page.click('span[data-icon="menu"]');
-
     await page.waitForSelector(
-      'div[aria-label="Settings"], span[data-icon="settings"]',
+      'button[aria-label="Configurações"], button[aria-label="Settings"]',
       { timeout: 5000 }
     );
-    await page.click('div[aria-label="Settings"], span[data-icon="settings"]');
+    await page.click(
+      'button[aria-label="Configurações"], button[aria-label="Settings"]'
+    );
+
+    await page.waitForTimeout(500);
 
     const [logoutButton] = await page.$x(
-      "//div[text()='Log out' or text()='Sair']"
+      "//div[contains(@role,'button') and (text()='Sair' or text()='Log out' or text()='Desconectar')]"
     );
 
     if (logoutButton) {
