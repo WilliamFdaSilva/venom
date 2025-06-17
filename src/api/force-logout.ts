@@ -10,10 +10,10 @@ export async function forceLogoutFromWeb(page: Page): Promise<boolean> {
       'button[aria-label="Configurações"], button[aria-label="Settings"]'
     );
 
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(800);
 
     const [logoutButton] = await page.$x(
-      "//div[contains(@role,'button') and (text()='Sair' or text()='Log out' or text()='Desconectar')]"
+      "//*[self::div or self::span][normalize-space(text())='Sair' or normalize-space(text())='Log out' or normalize-space(text())='Desconectar']"
     );
 
     if (logoutButton) {
@@ -22,6 +22,9 @@ export async function forceLogoutFromWeb(page: Page): Promise<boolean> {
       return true;
     }
 
+    console.warn(
+      '[forceLogoutFromWeb] Botão de logout não encontrado na tela de configurações.'
+    );
     return false;
   } catch (error) {
     console.error(
